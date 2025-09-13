@@ -1,0 +1,159 @@
+version: '3.8'
+
+services:
+  # FFmpeg 시뮬레이터 서비스들 (8개 채널)
+  ffmpeg-sim-01:
+    image: alpine:latest
+    container_name: ffmpeg-sim-01
+    command: >
+      sh -c "
+        apk add --no-cache procps &&
+        exec -a 'ffmpeg -f rtsp -i rtsp://source:9001/stream -c:v libx264 -c:a aac -f hls -hls_time 6 -hls_list_size 5 /output/channel01/index.m3u8' sleep infinity
+      "
+    volumes:
+      - ./test-data:/output
+
+  ffmpeg-sim-02:
+    image: alpine:latest
+    container_name: ffmpeg-sim-02
+    command: >
+      sh -c "
+        apk add --no-cache procps &&
+        exec -a 'ffmpeg -f rtsp -i rtsp://source:9002/stream -c:v libx264 -c:a aac -f hls -hls_time 6 -hls_list_size 5 /output/channel02/index.m3u8' sleep infinity
+      "
+    volumes:
+      - ./test-data:/output
+
+  ffmpeg-sim-03:
+    image: alpine:latest
+    container_name: ffmpeg-sim-03
+    command: >
+      sh -c "
+        apk add --no-cache procps &&
+        exec -a 'ffmpeg -f rtsp -i rtsp://source:9003/stream -c:v libx264 -c:a aac -f hls -hls_time 6 -hls_list_size 5 /output/channel03/index.m3u8' sleep infinity
+      "
+    volumes:
+      - ./test-data:/output
+
+  ffmpeg-sim-04:
+    image: alpine:latest
+    container_name: ffmpeg-sim-04
+    command: >
+      sh -c "
+        apk add --no-cache procps &&
+        exec -a 'ffmpeg -f rtsp -i rtsp://source:9004/stream -c:v libx264 -c:a aac -f hls -hls_time 6 -hls_list_size 5 /output/channel04/index.m3u8' sleep infinity
+      "
+    volumes:
+      - ./test-data:/output
+
+  ffmpeg-sim-05:
+    image: alpine:latest
+    container_name: ffmpeg-sim-05
+    command: >
+      sh -c "
+        apk add --no-cache procps &&
+        exec -a 'ffmpeg -f rtsp -i rtsp://source:9005/stream -c:v libx264 -c:a aac -f hls -hls_time 6 -hls_list_size 5 /output/channel05/index.m3u8' sleep infinity
+      "
+    volumes:
+      - ./test-data:/output
+
+  ffmpeg-sim-06:
+    image: alpine:latest
+    container_name: ffmpeg-sim-06
+    command: >
+      sh -c "
+        apk add --no-cache procps &&
+        exec -a 'ffmpeg -f rtsp -i rtsp://source:9006/stream -c:v libx264 -c:a aac -f hls -hls_time 6 -hls_list_size 5 /output/channel06/index.m3u8' sleep infinity
+      "
+    volumes:
+      - ./test-data:/output
+
+  ffmpeg-sim-07:
+    image: alpine:latest
+    container_name: ffmpeg-sim-07
+    command: >
+      sh -c "
+        apk add --no-cache procps &&
+        exec -a 'ffmpeg -f rtsp -i rtsp://source:9007/stream -c:v libx264 -c:a aac -f hls -hls_time 6 -hls_list_size 5 /output/channel07/index.m3u8' sleep infinity
+      "
+    volumes:
+      - ./test-data:/output
+
+  ffmpeg-sim-08:
+    image: alpine:latest
+    container_name: ffmpeg-sim-08
+    command: >
+      sh -c "
+        apk add --no-cache procps &&
+        exec -a 'ffmpeg -f rtsp -i rtsp://source:9008/stream -c:v libx264 -c:a aac -f hls -hls_time 6 -hls_list_size 5 /output/channel08/index.m3u8' sleep infinity
+      "
+    volumes:
+      - ./test-data:/output
+
+  # HLS 파일 생성기
+  hls-generator:
+    image: alpine:latest
+    container_name: hls-generator
+    command: >
+      sh -c "
+        apk add --no-cache bash coreutils &&
+        mkdir -p /output/channel{01..08} &&
+        cat > /generate-hls.sh << 'SCRIPT'
+        #!/bin/bash
+        while true; do
+          for ch in {01..08}; do
+            dir=\"/output/channel\$ch\"
+            segment=\$((RANDOM % 9999 + 1000))
+            
+            # M3U8 파일 생성
+            cat > \"\$dir/index.m3u8\" << EOM
+        #EXTM3U
+        #EXT-X-VERSION:3
+        #EXT-X-TARGETDURATION:6
+        #EXT-X-MEDIA-SEQUENCE:\$segment
+        
+        EOM
+            
+            # 5개 세그먼트 생성
+            for i in \$(seq \$((\$segment-4)) \$segment); do
+              segfile=\"segment_\$(printf %06d \$i).ts\"
+              
+              # 세그먼트 파일 생성 (더미 데이터)
+              if [ ! -f \"\$dir/\$segfile\" ]; then
+                dd if=/dev/urandom of=\"\$dir/\$segfile\" bs=1024 count=\$((RANDOM % 300 + 100)) 2>/dev/null
+              fi
+              
+              echo \"#EXTINF:6.0,\" >> \"\$dir/index.m3u8\"
+              echo \"\$segfile\" >> \"\$dir/index.m3u8\"
+            done
+            
+            # 추가 품질별 M3U8 파일들
+            for quality in 720p 480p 360p; do
+              cp \"\$dir/index.m3u8\" \"\$dir/\$quality.m3u8\"
+            done
+          done
+          sleep 6
+        done
+        SCRIPT
+        chmod +x /generate-hls.sh &&
+        exec /generate-hls.sh
+      "
+    volumes:
+      - ./test-data:/output
+    depends_on:
+      - ffmpeg-sim-01
+      - ffmpeg-sim-02
+      - ffmpeg-sim-03
+      - ffmpeg-sim-04
+      - ffmpeg-sim-05
+      - ffmpeg-sim-06
+      - ffmpeg-sim-07
+      - ffmpeg-sim-08
+
+volumes:
+  test-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/test-data
