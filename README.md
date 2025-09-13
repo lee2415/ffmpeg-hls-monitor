@@ -10,11 +10,69 @@ k9s 스타일의 CLI UI로 FFmpeg 프로세스와 HLS 패키징을 실시간 모
 - **전체 화면 UI**: 터미널 창을 꽉 채우는 반응형 레이아웃
 - **직관적인 UI**: 메인 화면과 상세 화면 간의 부드러운 전환
 
-## 빌드 방법
+## 설치 방법
 
+### 1. 사전 빌드된 바이너리 다운로드 (권장)
+
+**Linux (AMD64):**
 ```bash
-go build -o multiview-monitor ./cmd/monitor
+wget https://github.com/your-repo/multiview-monitor/releases/download/v1.0.0/multiview-monitor_1.0.0_linux_amd64.tar.gz
+tar -xzf multiview-monitor_1.0.0_linux_amd64.tar.gz
+cd multiview-monitor_1.0.0_linux_amd64
+sudo ./install.sh  # 또는 수동으로 /usr/local/bin에 복사
 ```
+
+**Linux (ARM64):**
+```bash
+wget https://github.com/your-repo/multiview-monitor/releases/download/v1.0.0/multiview-monitor_1.0.0_linux_arm64.tar.gz
+tar -xzf multiview-monitor_1.0.0_linux_arm64.tar.gz
+cd multiview-monitor_1.0.0_linux_arm64
+sudo ./install.sh
+```
+
+**macOS (Intel):**
+```bash
+curl -L https://github.com/your-repo/multiview-monitor/releases/download/v1.0.0/multiview-monitor_1.0.0_darwin_amd64.tar.gz | tar -xz
+cd multiview-monitor_1.0.0_darwin_amd64
+sudo ./install.sh
+```
+
+**macOS (Apple Silicon):**
+```bash
+curl -L https://github.com/your-repo/multiview-monitor/releases/download/v1.0.0/multiview-monitor_1.0.0_darwin_arm64.tar.gz | tar -xz
+cd multiview-monitor_1.0.0_darwin_arm64
+sudo ./install.sh
+```
+
+**Windows:**
+1. [multiview-monitor_1.0.0_windows_amd64.zip](https://github.com/your-repo/multiview-monitor/releases/download/v1.0.0/multiview-monitor_1.0.0_windows_amd64.zip) 다운로드
+2. 압축 해제 후 `multiview-monitor.exe` 실행
+
+### 2. 소스 코드에서 빌드
+
+**요구사항:**
+- Go 1.25 이상
+
+**빌드 방법:**
+```bash
+# 현재 플랫폼용 빌드
+go build -o multiview-monitor ./cmd/monitor
+
+# 정적 바이너리 생성 (권장)
+CGO_ENABLED=0 go build -a -ldflags '-w -s -extldflags "-static"' -o multiview-monitor ./cmd/monitor
+
+# 크로스 플랫폼 빌드
+./build.sh        # 모든 플랫폼용 바이너리 생성
+./package.sh      # 배포용 아카이브 생성
+```
+
+### 3. 바이너리 특징
+
+- **Go 런타임 불필요**: 정적 컴파일된 단일 실행 파일
+- **의존성 없음**: 별도 라이브러리 설치 불필요
+- **크로스 플랫폼**: Linux, macOS, Windows 지원
+- **작은 크기**: 약 3.5-4MB (압축시 1.3-1.6MB)
+- **k9s 스타일**: 어디서나 실행 가능한 단일 바이너리
 
 ## 사용 방법
 
