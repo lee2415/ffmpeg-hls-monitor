@@ -1,0 +1,39 @@
+# MultiView Monitor - Production Configuration Example
+# This configuration is optimized for production streaming environment
+
+# HLS package monitoring settings
+hls:
+  # Production streaming output directory
+  base_path: "/data/streaming/output"
+  channel_dir_pattern: "ch_%02d"
+
+# FFmpeg process monitoring settings  
+ffmpeg:
+  # Production port range starting from 9000
+  start_port: 9000
+  port_increment: 1
+
+# Channel configuration for production
+channels:
+  # Monitor 32 channels in production
+  count: 32
+  id_format: "stream_%02d"
+  name_format: "Production Stream %02d"
+
+# UI configuration
+ui:
+  # Faster refresh for production monitoring
+  refresh_interval: 1
+  fullscreen: true
+  theme: "dark"
+
+# Logging configuration for production
+logging:
+  file: "/var/log/multiview-monitor.log"
+  level: "info"
+
+# Application metadata
+app:
+  name: "MultiView Production Monitor"
+  version: "1.0.0"
+  description: "Production streaming monitoring system"

@@ -1,0 +1,32 @@
+# MultiView Monitor Configuration File
+# This file contains settings for the MultiView Monitor application
+# 
+# Priority: Command line arguments > Config file > Default values
+#
+# Examples:
+#   ./multiview-monitor -f multiview-monitor.yaml
+#   ./multiview-monitor -f custom.yaml -c 12 -p /custom/path
+#
+# Generate new config: ./multiview-monitor --generate-config
+
+hls:
+    base_path: /output
+    channel_dir_pattern: channel%02d
+ffmpeg:
+    start_port: 8001
+    port_increment: 1
+channels:
+    count: 24
+    id_format: ch%02d
+    name_format: Channel %02d
+ui:
+    refresh_interval: 1
+    fullscreen: true
+    theme: dark
+logging:
+    file: monitor.log
+    level: info
+app:
+    name: MultiView Monitor
+    version: 1.0.0
+    description: Real-time FFmpeg and HLS monitoring tool

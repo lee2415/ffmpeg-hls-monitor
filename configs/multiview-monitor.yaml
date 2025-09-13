@@ -1,0 +1,54 @@
+# MultiView Monitor Configuration File
+# This file contains default settings for the MultiView Monitor application
+
+# HLS package monitoring settings
+hls:
+  # Base path where HLS package directories are located
+  base_path: "/output"
+  
+  # Pattern for channel directory naming (uses sprintf format with channel number)
+  channel_dir_pattern: "channel%02d"
+
+# FFmpeg process monitoring settings  
+ffmpeg:
+  # Starting port number for FFmpeg processes
+  start_port: 8001
+  
+  # Port increment between channels (usually 1)
+  port_increment: 1
+
+# Channel configuration
+channels:
+  # Total number of channels to monitor
+  count: 24
+  
+  # Channel ID format (uses sprintf format with channel number)
+  id_format: "ch%02d"
+  
+  # Channel name format (uses sprintf format with channel number)  
+  name_format: "Channel %02d"
+
+# UI configuration
+ui:
+  # Refresh interval in seconds
+  refresh_interval: 1
+  
+  # Enable full screen mode
+  fullscreen: true
+  
+  # Color theme (light/dark)
+  theme: "dark"
+
+# Logging configuration
+logging:
+  # Log file path (empty for no file logging)
+  file: "monitor.log"
+  
+  # Log level (debug, info, warn, error)
+  level: "info"
+
+# Application metadata
+app:
+  name: "MultiView Monitor"
+  version: "1.0.0"
+  description: "Real-time FFmpeg and HLS monitoring tool"

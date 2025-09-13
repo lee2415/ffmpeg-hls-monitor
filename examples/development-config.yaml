@@ -1,0 +1,39 @@
+# MultiView Monitor - Development Configuration Example
+# This configuration is optimized for development and testing
+
+# HLS package monitoring settings
+hls:
+  # Local development directory
+  base_path: "/tmp/hls-dev"
+  channel_dir_pattern: "dev_channel_%02d"
+
+# FFmpeg process monitoring settings  
+ffmpeg:
+  # Development port range
+  start_port: 8100
+  port_increment: 10  # Wider port gaps for testing
+
+# Channel configuration for development
+channels:
+  # Small number of channels for testing
+  count: 6
+  id_format: "dev_%02d"
+  name_format: "Dev Channel %02d"
+
+# UI configuration
+ui:
+  # Slower refresh for development
+  refresh_interval: 2
+  fullscreen: true
+  theme: "dark"
+
+# Logging configuration for development
+logging:
+  file: "dev-monitor.log"
+  level: "debug"  # Verbose logging for development
+
+# Application metadata
+app:
+  name: "MultiView Dev Monitor"
+  version: "1.0.0-dev"
+  description: "Development streaming monitoring system"
